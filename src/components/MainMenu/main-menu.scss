@@ -1,0 +1,51 @@
+.main-menu {
+    &.ui.menu {
+        margin: 0px;
+        border-radius: 0px;
+        border-bottom: 1px solid rgba(200,200,200, 0.3);
+        height: 41px;
+    }
+    
+    .ui.dropdown {
+        margin-top: -5px;
+        padding: 3px;
+        padding-left: 6px;
+        position: relative;
+        top: 2px;
+        min-width: 200px;
+        min-height: 0px;
+        color: white;
+        background: transparent;
+        .dropdown.icon {
+            padding: 3px;
+        }
+
+        input.search {
+            color: white !important;
+            padding-top: 3px !important;
+        }
+        .menu {
+            margin-top: 5px;
+            max-height: 80vh;
+        }
+    }
+    .right.item {
+        padding-top: 3px;
+        padding-bottom: 3px;
+    }
+    button.ui.button.tiny.inverted {
+        font-size: .85714286rem;
+        position: relative;
+        top: 0px;
+        padding-top: 6px !important;
+        padding-bottom: 6px !important;
+        border: 1px solid rgba(255,255,255,0.6) !important;
+        box-shadow: none !important;
+        &:hover {
+            background :rgba(255,255,255,0.1) !important;
+        }
+    }
+    a button.ui.button.tiny.inverted {
+        top: 0px;
+    }
+}

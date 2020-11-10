@@ -1,0 +1,24 @@
+.workbench {
+    overflow: hidden;
+    
+    .columnResizer {
+        width: 5px;
+        background: blue;
+    }
+    
+    .frame-td {
+        overflow: hidden;
+    }
+    
+    .monaco-editor {
+        font-family: Menlo, Monaco, "Courier New", monospace !important;
+        div, span {
+            font-family: Menlo, Monaco, "Courier New", monospace !important;
+        }
+        .margin {
+            user-select: none;
+        }
+    }
+}
+
+
