@@ -1,5 +1,9 @@
+import {
+    apiUrl
+} from 'constants/url'
+
 export const createScript = scriptName => {
-    return fetch('api/script', {
+    return fetch(apiUrl + 'api/script', {
         method: "POST",
         body: JSON.stringify(scriptName),
         headers: {
@@ -9,11 +13,11 @@ export const createScript = scriptName => {
 }
 
 export const getScriptsForUser = () => {
-    return fetch(`api/script/user-scripts`)
+    return fetch(apiUrl + `api/script/user-scripts`)
 }
 
 export const updateScript = (script) => {
-    return fetch('api/script', {
+    return fetch(apiUrl + 'api/script', {
         method: "PUT",
         body: JSON.stringify({
             ...script,
