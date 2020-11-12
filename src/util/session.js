@@ -13,7 +13,6 @@ export const signUp = user => {
 }
 
 export const signIn = user => {
-    console.log('sign in user on session')
     return fetch(apiUrl + 'api/session', {
         method: "POST",
         body: JSON.stringify(user),
@@ -25,10 +24,11 @@ export const signIn = user => {
 
 export const signOut = () => {
     return fetch(apiUrl + 'api/session', {
-        method: "DELETE"
+        method: "DELETE",
+        credentials: 'include'
     })
 }
 
 export const checkSession = () => {
-    return fetch(apiUrl + 'api/session')
+    return fetch(apiUrl + 'api/session', {credentials: 'include'})
 }

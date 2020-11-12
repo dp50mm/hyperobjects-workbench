@@ -3,7 +3,6 @@ import types from '../actionTypes'
 export const userActions = (dispatch) => {
     return {
         userLogIn: user => {
-            console.log("user log in data", user)
             dispatch({
                 type: types.USER_LOG_IN,
                 payload: user
