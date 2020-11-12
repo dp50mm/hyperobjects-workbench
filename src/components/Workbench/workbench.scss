@@ -19,6 +19,14 @@
             user-select: none;
         }
     }
+    .alert-messages {
+        position: fixed;
+        left: 0px;
+        bottom: 0px;
+        z-index: 100;
+        padding: 20px;
+        user-select: none;
+    }
 }
 
 

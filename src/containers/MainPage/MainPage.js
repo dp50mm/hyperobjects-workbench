@@ -4,9 +4,7 @@ import Workbench from 'components/Workbench'
 import { StoreContext } from 'store/store'
 
 
-const MainPage = ({
-
-}) => {
+const MainPage = () => {
   const { state, actions, selectedScript } = useContext(StoreContext)
   const { user } = state
   if(user === false) {

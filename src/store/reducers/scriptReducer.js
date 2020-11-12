@@ -6,6 +6,7 @@ export const initialScriptState = {
     createError: false,
     storing: false,
     storeError: false,
+    storeSuccessful: false,
     script: false
 }
 
@@ -20,7 +21,9 @@ export const scriptReducer = (state = initialScriptState, action) => {
         case types.SCRIPT_UPDATE_CONFIRMED:
             return {
                 ...state,
-                storing: false
+                storing: false,
+                storeSuccessful: true,
+                storeError: false
             }
         case types.SCRIPT_UPDATE_ERROR:
             return {

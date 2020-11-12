@@ -8,8 +8,6 @@ import _ from 'lodash'
 const NewScriptForm = () => {
     const { state, actions } = useContext(StoreContext)
     const [newScriptName, setNewScriptName] = useState("")
-    console.log(state)
-    console.log(actions)
     let newScript = _.find(state.user.scripts, p => _.get(p, 'new', false))
     return (
         <div className='new-script-form'>

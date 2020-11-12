@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@dp50mm/hyperobjects-language": "^1.7.7",
+    "@dp50mm/hyperobjects-language": "^1.7.8",
     "@monaco-editor/react": "^3.6.3",
     "@react-hook/mouse-position": "^4.1.0",
     "@rehooks/component-size": "^1.0.3",

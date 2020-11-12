@@ -3,19 +3,22 @@ import React, { useRef, useState, useEffect } from 'react'
 import {
 Frame,
 Model,
-Path,
 hyperobjectsLanguageWrapper,
 executeCode,
 setupCodeExecution
 } from '@dp50mm/hyperobjects-language'
 import '@dp50mm/hyperobjects-language/dist/index.css'
 import './workbench.scss'
-import useComponentSize from '@rehooks/component-size'
 import { ControlledEditor as MonacoEditor } from '@monaco-editor/react'
 import _ from 'lodash'
 import useMouse from '@react-hook/mouse-position'
-import ReactResizeDetector from 'react-resize-detector'
 import { demoScript } from 'constants/demoScripts'
+import getParams from 'util/getParams'
+import AlertMessages from './components/AlertMessages'
+import {
+  getLetWarnings 
+} from './util/codeUtils'
+
 setupCodeExecution()
 
 
@@ -26,6 +29,10 @@ let model = new Model()
 
 let editor = false
 
+const urlParams = getParams(window.location.href)
+let dontRunCode = _.get(urlParams, 'stop-code', false) === 'y'
+
+
 
 const Workbench = ({
   script,
@@ -34,13 +41,16 @@ const Workbench = ({
 }) => {
     const workbenchRef = useRef(null)
     const frameContainerRef = useRef(null)
-    const frameContainerSize = useComponentSize(frameContainerRef)
     const [code, setCode] = useState(script)
     const [codeUpdated, setCodeUpdated] = useState(true)
     const [modelUpdated, setModelUpdated] = useState(false)
     const [modelIncrement, setModelIncrement] = useState(0)
     const [colDivision, setColDivision] = useState(0.5)
     const [resizingColumns, setResizingColumns] = useState(false)
+    const [alertMessages, setAlertMessages] = useState({
+      let_warning: false,
+      script_error: false
+    })
     const mouse = useMouse(workbenchRef, {
       enterDelay: 100,
       leaveDelay: 100
@@ -54,39 +64,66 @@ const Workbench = ({
         setCode(script)
         setCodeUpdated(true)
       }
-    })
+    }, [scriptFromProp, script])
     useEffect(() => {
         if(codeUpdated) {
-        // code has updated, run code
-        let wrappedCode = hyperobjectsLanguageWrapper(code)
-        try {
-            let syntax = esprima.parseModule(wrappedCode.script, {
-            tolerant: false,
-            loc: true
-            })
-            if(syntax.hasOwnProperty('errors')) {
-            console.log('syntax errors')
-            console.log(syntax.errors)
-            } else {
-            let id = executeCode(wrappedCode)
-            setTimeout(() => {
-                model = window[`OUTPUTMODEL${id}`]
-                onChange(code)
-                setModelUpdated(true)
-            }, 10)
-            }
-        } catch(error) {
-            // console.log(error)
-        }
-        
-        setCodeUpdated(false)
+          // code has updated, run code
+          try {
+              var wrappedCode = hyperobjectsLanguageWrapper(code)
+              let letWarnings = getLetWarnings(code)
+              if(letWarnings.length > 0) {
+                let letAlertMessageText = "Warning: using let can cause crashes with double declarations. Try using var instead! check code line(s): "
+                letWarnings.forEach(declaration => {
+                  letAlertMessageText = letAlertMessageText + `${declaration.loc.start.line}, `
+                })
+                if(!alertMessages.let_warning || alertMessages.let_warning.text !== letAlertMessageText) {
+                  setAlertMessages({...alertMessages, let_warning: {text: letAlertMessageText}})
+                }
+                var codeWithLetReplaced = _.clone(code).replace(/let \b/g, 'var ')
+                wrappedCode = hyperobjectsLanguageWrapper(codeWithLetReplaced)
+              } else {
+                if(alertMessages.let_warning) {
+                  setAlertMessages({...alertMessages, let_warning: false})
+                }
+              }
+              let syntax = esprima.parseScript(wrappedCode.script, {
+                tolerant: false,
+                loc: true
+              })
+
+              if(syntax.hasOwnProperty('errors')) {
+                console.log('syntax errors')
+                console.log(syntax.errors)
+                
+              } else {
+                let id = false
+                if(!dontRunCode) {
+                  id = executeCode(wrappedCode)
+                }
+                setTimeout(() => {
+                    if(!dontRunCode) {
+                      model = window[`OUTPUTMODEL${id}`]
+                    }
+                    if(alertMessages.script_error !== false) {
+                      setAlertMessages({...alertMessages, script_error: false})
+                    }
+                    onChange(code)
+                    setModelUpdated(true)
+                }, 10)
+              }
+          } catch(error) {
+              console.log(error)
+              setAlertMessages({...alertMessages, script_error: { text: `Line: ${error.lineNumber} - ${error.description}`}})
+          }
+          
+          setCodeUpdated(false)
         }
 
         if(modelUpdated) {
         setModelIncrement(modelIncrement + 1)
         setModelUpdated(false)
         }
-    })
+    }, [codeUpdated, modelUpdated, code, alertMessages, onChange, modelIncrement])
 
     useEffect(() => {
         function handleResize() {
@@ -125,12 +162,7 @@ const Workbench = ({
         setResizingColumns(false)
       }}
       >
-      <div
-        style={{display: 'flex', position: 'relative'}}
-        onPointerMove={() => {
-
-        }}
-        >
+      <div style={{display: 'flex', position: 'relative'}} >
         <div className='resizer'
           style={{
             position: 'absolute',
@@ -164,9 +196,12 @@ const Workbench = ({
             theme='vs-dark'
             editorDidMount={(_editor, monaco) => {
               editor = monaco
-              console.log(editor)
             }}
             />
+            <AlertMessages
+              width={codeEditorWidth}
+              messages={alertMessages}
+              />
         </div>
         <div style={{width: frameWidth}} ref={frameContainerRef}>
           <Frame
@@ -178,6 +213,7 @@ const Workbench = ({
             showBounds={true}
             showGridLines={true}
             showZoomControls={true}
+            animationControls={model.animated}
             />
         </div>
       </div>

@@ -7,7 +7,10 @@ import {
     Container,
     Button,
     Modal,
-    Dropdown
+    Dropdown,
+    Loader,
+    Message,
+    Icon
 } from 'semantic-ui-react'
 import LoginForm from 'components/LoginForm'
 import NewScriptForm from 'components/NewScriptForm'
@@ -99,6 +102,19 @@ const MainMenu = () => {
                                 selection
                                 options={scriptsForMenu} />
                         </Menu.Item>
+                        {selectedScript && (
+                            <Menu.Item style={{minWidth: 150}}>
+                                {selectedScript.storing ? (
+                                    <Loader active />
+                                ) : selectedScript.storeError ? (
+                                    <Message negative style={{padding: 3, width: '100%', paddingLeft: 9}}><Icon name='warning circle'/>Store error</Message>
+                                ) : selectedScript.storeSuccessful ? (
+                                    <p>script synced <Icon name='checkmark'/></p>
+                                ) : (
+                                    <p></p>
+                                )}
+                            </Menu.Item>
+                        )}
                         <Menu.Item>
                             <Button size="tiny" basic inverted onPointerDown={() => {
                                 actions.scriptCreateResetParameters()
@@ -107,6 +123,7 @@ const MainMenu = () => {
                                 New script
                             </Button>
                         </Menu.Item>
+                        
                     </Menu.Menu>
                     <Menu.Menu position='right'>
                         <Menu.Item>
