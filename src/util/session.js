@@ -16,8 +16,10 @@ export const signIn = user => {
     return fetch(apiUrl + 'api/session', {
         method: "POST",
         body: JSON.stringify(user),
+        // credentials: 'include',
         headers: {
-            "Content-Type":"application/json"
+            "Content-Type":"application/json",
+            "Hyperobjects-Service":"Workbench"
         }
     })
 }

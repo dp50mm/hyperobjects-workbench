@@ -213,6 +213,7 @@ const Workbench = ({
             showBounds={true}
             showGridLines={true}
             showZoomControls={true}
+            exportControls={true}
             animationControls={model.animated}
             />
         </div>
