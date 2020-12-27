@@ -11,7 +11,6 @@ const MainPage = ({
     const user = useContext(UserContext)
     const scriptsContext = useContext(ScriptContext)
 
-    console.log(scriptsContext)
     const selectedScript = _.get(uiState, 'selectedScript', false)
     let script = _.get(selectedScript, 'script', '// select a script')
     
@@ -28,12 +27,11 @@ const MainPage = ({
                 script={script}
                 scriptFromProp={true}
                 onChange={(newScript) => {
-                    
                     if(selectedScript && newScript !== script) {
-                        console.log('push new script to db')
                         scriptsContext.actions.updateScript({
                             ...selectedScript,
-                            script: newScript
+                            script: newScript,
+                            storeVersion: true
                         })
                     }
                 }}

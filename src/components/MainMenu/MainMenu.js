@@ -60,12 +60,15 @@ const MainMenu = ({
             </Modal>
             <Modal
                 open={modal === 'new-script-modal'}
-                onClose={() => setModal(false)}
+                onClose={() => {
+                    console.log(scriptsContext)
+                    setModal(false)
+                }}
                 closeIcon
                 size="mini"
                 >
                 <Modal.Content>
-                    <NewEntityForm />
+                    <NewEntityForm context={ScriptContext} />
                 </Modal.Content>
             </Modal>
             <Menu inverted className='main-menu'>

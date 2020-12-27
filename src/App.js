@@ -16,8 +16,11 @@ import MainMenu from 'components/MainMenu'
 import CreateAccountPage from 'containers/CreateAccountPage';
 import MainPage from 'containers/MainPage';
 import 'semantic-ui-css/semantic.min.css';
+import '@dialectic-design/hyperobjects-entity-context/dist/index.css'
+import '@dialectic-design/hyperobjects-user-context/dist/index.css'
 import './App.scss';
 import _ from 'lodash'
+import AccountPage from 'containers/AccountPage'
 
 export const scriptStore = createStore('script')
 const ScriptProvider = scriptStore.provider
@@ -57,6 +60,9 @@ const AppWithUserAndScript = () => {
                         <Switch>
                             <Route path='/create-account'>
                                 <CreateAccountPage />
+                            </Route>
+                            <Route path='/account'>
+                                <AccountPage />
                             </Route>
                             <Route path='/'>
                                 <MainPage uiState={uiState} />
