@@ -24,8 +24,8 @@ setupCodeExecution()
 
 var esprima = require('esprima')
 
-let model = new Model()
 
+let model = new Model()
 
 let editor = false
 
@@ -35,9 +35,10 @@ let dontRunCode = _.get(urlParams, 'stop-code', false) === 'y'
 
 
 const Workbench = ({
-  script,
-  onChange,
-  scriptFromProp
+	name,
+	script,
+	onChange,
+	scriptFromProp
 }) => {
     const workbenchRef = useRef(null)
     const frameContainerRef = useRef(null)
@@ -59,12 +60,14 @@ const Workbench = ({
       width: window.innerWidth,
       height: window.innerHeight
     })
+    
     useEffect(() => {
       if(scriptFromProp) {
         setCode(script)
         setCodeUpdated(true)
       }
     }, [scriptFromProp, script])
+    
     useEffect(() => {
         if(codeUpdated) {
           // code has updated, run code
@@ -143,83 +146,85 @@ const Workbench = ({
       if(editor) {
         editor.layout()
       }
-    })
-  return (
-    <div className="workbench" ref={workbenchRef}
-      style={{
-        cursor: resizingColumns ? 'col-resize' : 'inherit',
-        height: windowSize.height - menuHeight
-      }}
-      onPointerMove={() => {
-        if(resizingColumns) {
-          setColDivision(mouse.x / mouse.elementWidth)
-        }
-      }}
-      onPointerUp={() => {
-        setResizingColumns(false)
-      }}
-      onPointerLeave={() => {
-        setResizingColumns(false)
-      }}
-      >
-      <div style={{display: 'flex', position: 'relative'}} >
-        <div className='resizer'
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: codeEditorWidth,
-            height: windowSize.height - menuHeight,
-            width: resizerPadding,
-            background: 'black',
-            opacity: 0.5,
-            cursor: 'col-resize',
-            zIndex: 100
-          }}
-          onPointerDown={() => {
-            setResizingColumns(true)
-          }}
-          />
-        <div style={{width: codeEditorWidth, marginRight: resizerPadding}}>
-          <MonacoEditor
-            value={code}
-            onChange={(e, newValue) => {
-              setCode(newValue)
-              setCodeUpdated(true)
-            }}
-            language="javascript"
-            options={{
-              selectOnLineNumbers: true,
-              automaticLayout: true
-            }}
-            automaticLayout={true}
-            height={windowSize.height - menuHeight}
-            theme='vs-dark'
-            editorDidMount={(_editor, monaco) => {
-              editor = monaco
-            }}
-            />
-            <AlertMessages
-              width={codeEditorWidth}
-              messages={alertMessages}
-              />
-        </div>
-        <div style={{width: frameWidth}} ref={frameContainerRef}>
-          <Frame
-            width={frameWidth}
-            height={windowSize.height - menuHeight}
-            model={model}
-            modelHasUpdated={modelUpdated}
-            editable={true}
-            showBounds={true}
-            showGridLines={true}
-            showZoomControls={true}
-            exportControls={true}
-            animationControls={model.animated}
-            />
-        </div>
-      </div>
-    </div>
-  );
+	})
+    model.name = name
+	return (
+		<div className="workbench" ref={workbenchRef}
+		style={{
+			cursor: resizingColumns ? 'col-resize' : 'inherit',
+			height: windowSize.height - menuHeight
+		}}
+		onPointerMove={() => {
+			if(resizingColumns) {
+			setColDivision(mouse.x / mouse.elementWidth)
+			}
+		}}
+		onPointerUp={() => {
+			setResizingColumns(false)
+		}}
+		onPointerLeave={() => {
+			setResizingColumns(false)
+		}}
+		>
+		<div style={{display: 'flex', position: 'relative'}} >
+			<div className='resizer'
+			style={{
+				position: 'absolute',
+				top: 0,
+				left: codeEditorWidth,
+				height: windowSize.height - menuHeight,
+				width: resizerPadding,
+				background: 'black',
+				opacity: 0.5,
+				cursor: 'col-resize',
+				zIndex: 100
+			}}
+			onPointerDown={() => {
+				setResizingColumns(true)
+			}}
+			/>
+			<div style={{width: codeEditorWidth, marginRight: resizerPadding}}>
+			<MonacoEditor
+				value={code}
+				onChange={(e, newValue) => {
+				setCode(newValue)
+				setCodeUpdated(true)
+				}}
+				language="javascript"
+				options={{
+				selectOnLineNumbers: true,
+				automaticLayout: true
+				}}
+				automaticLayout={true}
+				height={windowSize.height - menuHeight}
+				theme='vs-dark'
+				editorDidMount={(_editor, monaco) => {
+				editor = monaco
+				}}
+				/>
+				<AlertMessages
+				width={codeEditorWidth}
+				messages={alertMessages}
+				/>
+			</div>
+			<div style={{width: frameWidth}} ref={frameContainerRef}>
+			<Frame
+				width={frameWidth}
+				height={windowSize.height - menuHeight}
+				model={model}
+				modelHasUpdated={modelUpdated}
+				editable={true}
+				showBounds={true}
+				showGridLines={true}
+				showZoomControls={true}
+				exportControls={true}
+				renderControls={model.animated}
+				animationControls={model.animated}
+				/>
+			</div>
+		</div>
+		</div>
+	);
 }
 
 Workbench.defaultProps = {

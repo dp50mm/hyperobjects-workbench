@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { UserContext } from '@dialectic-design/hyperobjects-user-context'
 import { ScriptContext } from 'App'
 import Demo from './Demo'
@@ -10,10 +10,17 @@ const MainPage = ({
 }) => {
     const user = useContext(UserContext)
     const scriptsContext = useContext(ScriptContext)
-
+    const [currentScriptId, setCurrentScriptId] = useState(false)
     const selectedScript = _.get(uiState, 'selectedScript', false)
     let script = _.get(selectedScript, 'script', '// select a script')
     
+    
+    var scriptFromProp = currentScriptId !== _.get(selectedScript, '_id', false)
+    useEffect(() => {
+        if(currentScriptId !== _.get(selectedScript, '_id', false)) {
+            setCurrentScriptId(_.get(selectedScript, '_id', false))
+        }
+    })
     if(!user.authenticated) {
         return (
             <div className='main-page'>
@@ -21,11 +28,13 @@ const MainPage = ({
             </div>
         )
     }
+    
     return (
         <div className='main-page'>
             <Workbench
+                name={_.get(selectedScript, 'name', 'no script name')}
                 script={script}
-                scriptFromProp={true}
+                scriptFromProp={scriptFromProp}
                 onChange={(newScript) => {
                     if(selectedScript && newScript !== script) {
                         scriptsContext.actions.updateScript({

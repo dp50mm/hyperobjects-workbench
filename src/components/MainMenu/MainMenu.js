@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import {
     Link
 } from 'react-router-dom'
@@ -24,6 +24,7 @@ import {
     ScriptContext
 } from 'App'
 import _ from 'lodash'
+import $ from 'jquery'
 
 const MainMenu = ({
     uiState
@@ -31,6 +32,7 @@ const MainMenu = ({
     const user = useContext(UserContext)
     const scriptsContext = useContext(ScriptContext)
     const [modal, setModal] = useState(false)
+    const [defocus, setDefocus] = useState(false)
     let scriptsForMenu = []
     scriptsContext.list.forEach(script => {
         scriptsForMenu.push({
@@ -39,12 +41,19 @@ const MainMenu = ({
             text: script.name
         })
     })
+    useEffect(() => {
+        if(defocus) {
+            setTimeout(() => {
+                const inputElement = $('.main-menu-script-select input').first()[0]
+                inputElement.blur()
+            }, 20)
+            setDefocus(false)
+        }
+    }, [defocus, setDefocus])
     let selectedScriptId = _.get(uiState, 'selectedScriptId', false)
     let selectedScript = false
-    let selectedScriptvalue = false
     if(selectedScriptId) {
         selectedScript = _.get(uiState, 'selectedScript', false)
-        selectedScriptvalue = selectedScript._id
     }
     return (
         <React.Fragment>
@@ -74,7 +83,7 @@ const MainMenu = ({
             <Menu inverted className='main-menu'>
                 <Container fluid>
                     <Link to='/'>
-                        <Menu.Item as='a' header>
+                        <Menu.Item header>
                             Hyperobjects workbench
                         </Menu.Item>
                     </Link>
@@ -106,11 +115,12 @@ const MainMenu = ({
                                     value={selectedScriptId}
                                     onChange={(e, data) => {
                                         uiState.setSelectedScriptId(data.value)
-                                        // actions.selectScript(data.value)
+                                        setDefocus(true)
                                     }}
                                     placeholder='Scripts'
                                     fluid
                                     selection
+                                    className='main-menu-script-select'
                                     options={scriptsForMenu} />
                             </Menu.Item>
                             {selectedScript && (

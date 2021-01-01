@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@dialectic-design/hyperobjects-entity-context": "^1.0.6",
+    "@dialectic-design/hyperobjects-entity-context": "^1.0.7",
     "@dialectic-design/hyperobjects-user-context": "^1.0.13",
-    "@dp50mm/hyperobjects-language": "^1.7.18",
+    "@dp50mm/hyperobjects-language": "^1.7.24",
     "@monaco-editor/react": "^3.6.3",
     "@react-hook/mouse-position": "^4.1.0",
     "@rehooks/component-size": "^1.0.3",
@@ -15,6 +15,7 @@
     "d3": "^6.2.0",
     "dayjs": "^1.9.6",
     "esprima": "^4.0.1",
+    "jquery": "^3.5.1",
     "node-sass": "^4.14.1",
     "ogl": "^0.0.60",
     "react": "^17.0.1",
@@ -27,7 +28,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "GENERATE_SOURCEMAP=false react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
