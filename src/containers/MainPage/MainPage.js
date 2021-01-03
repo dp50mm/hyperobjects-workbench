@@ -4,6 +4,9 @@ import { ScriptContext } from 'App'
 import Demo from './Demo'
 import _ from 'lodash'
 import Workbench from 'components/Workbench'
+import dayjs from 'dayjs'
+
+let latestVersionStored = dayjs().clone().subtract(5, 'seconds')
 
 const MainPage = ({
     uiState
@@ -37,10 +40,15 @@ const MainPage = ({
                 scriptFromProp={scriptFromProp}
                 onChange={(newScript) => {
                     if(selectedScript && newScript !== script) {
+                        var storeVersion = false
+                        if (dayjs().diff(latestVersionStored, 'second') > 30) {
+                            storeVersion = true
+                            latestVersionStored = dayjs()
+                        }
                         scriptsContext.actions.updateScript({
                             ...selectedScript,
                             script: newScript,
-                            storeVersion: true
+                            storeVersion: storeVersion
                         })
                     }
                 }}
