@@ -5,7 +5,7 @@
   "dependencies": {
     "@dialectic-design/hyperobjects-entity-context": "^1.0.7",
     "@dialectic-design/hyperobjects-user-context": "^1.0.13",
-    "@dp50mm/hyperobjects-language": "^1.7.31",
+    "@dp50mm/hyperobjects-language": "^1.7.36",
     "@monaco-editor/react": "^3.6.3",
     "@react-hook/mouse-position": "^4.1.0",
     "@rehooks/component-size": "^1.0.3",
