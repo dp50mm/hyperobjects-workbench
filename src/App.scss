@@ -6,3 +6,11 @@ h1, h2, h3, h4, h5, p, li, ul, strong, i, a {
     .page-content {
     }
 }
+
+.ui.button.toggle.active, .ui.buttons .button.toggle.active, .ui.toggle.buttons .active.button {
+    background-color: #A882BA !important;
+    &.basic {
+        background-color: rgba(255,255,255,0.4) !important;
+    }
+    
+}

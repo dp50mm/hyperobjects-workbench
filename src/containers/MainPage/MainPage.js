@@ -38,6 +38,7 @@ const MainPage = ({
                 name={_.get(selectedScript, 'name', 'no script name')}
                 script={script}
                 scriptFromProp={scriptFromProp}
+                autoRun={uiState.autoRun}
                 onChange={(newScript) => {
                     if(selectedScript && newScript !== script) {
                         var storeVersion = false

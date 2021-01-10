@@ -46,11 +46,15 @@ const AppWithUser = () => {
 const AppWithUserAndScript = () => {
     const scriptContext = useContext(ScriptContext)
     const [selectedScriptId, setSelectedScriptId] = useState(false)
+    const [autoRun, setAutoRun] = useState(true)
+
     const selectedScript = _.get(scriptContext, `dict.${selectedScriptId}`, false)
     const uiState = {
         selectedScriptId,
         setSelectedScriptId,
-        selectedScript
+        selectedScript,
+        autoRun,
+        setAutoRun
     }
     return (
             <Router>

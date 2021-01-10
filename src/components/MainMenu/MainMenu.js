@@ -144,6 +144,23 @@ const MainMenu = ({
                                     New script
                                 </Button>
                             </Menu.Item>
+                            <Menu.Item>
+                                <Button
+                                    size='tiny'
+                                    basic inverted
+                                    toggle
+                                    active={uiState.autoRun}
+                                    onClick={() => uiState.setAutoRun(!uiState.autoRun)}>
+                                    Run code
+                                    <span style={{paddingLeft: 10, marginRight: -10}}>
+                                    {uiState.autoRun ? (
+                                        <Icon name='stop circle outline'/>
+                                    ) : (
+                                        <Icon name='play circle outline'/>
+                                    )}
+                                    </span>
+                                </Button>
+                            </Menu.Item>
                             
                         </Menu.Menu>
                         <Menu.Menu position='right'>

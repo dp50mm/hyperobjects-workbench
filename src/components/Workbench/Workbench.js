@@ -38,7 +38,8 @@ const Workbench = ({
 	name,
 	script,
 	onChange,
-	scriptFromProp
+  scriptFromProp,
+  autoRun
 }) => {
     const workbenchRef = useRef(null)
     const frameContainerRef = useRef(null)
@@ -100,11 +101,11 @@ const Workbench = ({
                 
               } else {
                 let id = false
-                if(!dontRunCode) {
+                if(!dontRunCode && autoRun) {
                   id = executeCode(wrappedCode)
                 }
                 setTimeout(() => {
-                    if(!dontRunCode) {
+                    if(!dontRunCode && autoRun) {
                       model = window[`OUTPUTMODEL${id}`]
                     }
                     if(alertMessages.script_error !== false) {
