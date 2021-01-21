@@ -220,7 +220,7 @@ const Workbench = ({
 				showZoomControls={true}
 				exportControls={true}
 				renderControls={model.animated}
-				animationControls={model.animated}
+        animationControls={model.animated}
 				/>
 			</div>
 		</div>
