@@ -4,6 +4,7 @@ import { ScriptContext } from 'App'
 import Demo from './Demo'
 import _ from 'lodash'
 import Workbench from 'components/Workbench'
+import Modals from './Modals'
 import dayjs from 'dayjs'
 
 let latestVersionStored = dayjs().clone().subtract(5, 'seconds')
@@ -34,6 +35,7 @@ const MainPage = ({
     
     return (
         <div className='main-page'>
+            <Modals uiState={uiState} />
             <Workbench
                 name={_.get(selectedScript, 'name', 'no script name')}
                 script={script}

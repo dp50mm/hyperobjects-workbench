@@ -21,6 +21,7 @@ import '@dialectic-design/hyperobjects-user-context/dist/index.css'
 import './App.scss';
 import _ from 'lodash'
 import AccountPage from 'containers/AccountPage'
+import SharePage from 'containers/SharePage'
 
 export const scriptStore = createStore('script')
 const ScriptProvider = scriptStore.provider
@@ -47,14 +48,16 @@ const AppWithUserAndScript = () => {
     const scriptContext = useContext(ScriptContext)
     const [selectedScriptId, setSelectedScriptId] = useState(false)
     const [autoRun, setAutoRun] = useState(true)
-
+    const [mainPageModal, setMainPageModal] = useState(false)
     const selectedScript = _.get(scriptContext, `dict.${selectedScriptId}`, false)
     const uiState = {
         selectedScriptId,
         setSelectedScriptId,
         selectedScript,
         autoRun,
-        setAutoRun
+        setAutoRun,
+        mainPageModal,
+        setMainPageModal
     }
     return (
             <Router>
@@ -67,6 +70,9 @@ const AppWithUserAndScript = () => {
                             </Route>
                             <Route path='/account'>
                                 <AccountPage />
+                            </Route>
+                            <Route path="/share">
+                                <SharePage />
                             </Route>
                             <Route path='/'>
                                 <MainPage uiState={uiState} />

@@ -5,7 +5,25 @@
         border-bottom: 1px solid rgba(200,200,200, 0.3);
         height: 41px;
     }
+
+    button.ui.button.script-settings-button {
+        box-shadow: none !important;
+        &:hover {
+            background: rgba(255,255,255,0.2) !important;
+            box-shadow: 0 0 0 1px rgba(255,255,255, 0.5) inset!important;
+        }
+        &:focus {
+            box-shadow: none !important;
+        }
+    }
     
+    .account-name {
+        width: 150px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
     .ui.dropdown {
         margin-top: -5px;
         padding: 3px;

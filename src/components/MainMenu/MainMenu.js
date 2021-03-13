@@ -107,7 +107,13 @@ const MainMenu = ({
                     ) : (
                         <>
                         <Menu.Menu position='left'>
-                            <Menu.Item><p>Your scripts: </p></Menu.Item>
+                            <Menu.Item>
+                                <Button size="tiny" basic inverted
+                                    onPointerDown={() => uiState.setMainPageModal("your-scripts")}
+                                    >
+                                    Your scripts
+                                </Button>
+                            </Menu.Item>
                             <Menu.Item>
                                 <Dropdown
                                     search
@@ -124,6 +130,11 @@ const MainMenu = ({
                                     options={scriptsForMenu} />
                             </Menu.Item>
                             {selectedScript && (
+                                <React.Fragment>
+                                    <Menu.Item>
+                                        <Button onPointerDown={() => uiState.setMainPageModal("script-settings")}
+                                            icon="settings" basic inverted className='script-settings-button' />
+                                    </Menu.Item>
                                 <Menu.Item style={{minWidth: 150}}>
                                     {selectedScript.updating ? (
                                         <Loader active />
@@ -135,6 +146,7 @@ const MainMenu = ({
                                         <p></p>
                                     )}
                                 </Menu.Item>
+                                </React.Fragment>
                             )}
                             <Menu.Item>
                                 <Button size="tiny" basic inverted onPointerDown={() => {
