@@ -1,10 +1,22 @@
-import React from 'react'
+import { ScriptContext } from 'App'
+import React, { useContext } from 'react'
 import {
-    Modal
+    Modal,
+    Checkbox,
+    Table,
+    Form,
+    Input
 } from 'semantic-ui-react'
+import _ from "lodash"
+import dayjs from "dayjs"
+
+let latestVersionStored = dayjs().clone().subtract(5, 'seconds')
 
 const ScriptSettingsModal = ({uiState}) => {
-    console.log(uiState.mainPageModal)
+    const scriptsContext = useContext(ScriptContext)
+    console.log(uiState.selectedScript)
+    const script = uiState.selectedScript
+
     return (
         <Modal
             open={uiState.mainPageModal === "script-settings"}
@@ -15,9 +27,47 @@ const ScriptSettingsModal = ({uiState}) => {
             closeIcon
             >
             <Modal.Content>
-                <h1>Script settings</h1>
-                <p>Public toggle</p>
-                <p>Sharing url</p>
+                <h3>Script: {script.name}</h3>
+                <p>Updated at: {script.updatedAt}</p>
+                <div className='ui form'>
+                    <Form.Field>
+                    <Input
+                        style={{width: "90%", marginBottom: 10}}
+                        value={`https://workbench.hyperobjects.design/share/?script=${script._id}`}
+                        label="Share url"
+                        disabled={!_.get(script, 'public', false)}
+                        />
+                    <Checkbox
+                        style={{marginLeft: 10}}
+                        label="public"
+                        checked={_.get(script, 'public', false)}
+                        onChange={() => {
+                            var storeVersion = false
+                            if (dayjs().diff(latestVersionStored, 'second') > 30) {
+                                storeVersion = true
+                                latestVersionStored = dayjs()
+                            }
+                            scriptsContext.actions.updateScript({
+                                ...script,
+                                public: !_.get(script, "public", false),
+                                storeVersion: latestVersionStored
+                            })
+                        }}
+                        />
+                    </Form.Field>
+                </div>
+                {window.location.host.includes("localhost:3000") && (
+                    <div className='ui form'>
+                        <Form.Field>
+                        <Input
+                            style={{width: "90%"}}
+                            value={`http://localhost:3000/share/?script=${script._id}`}
+                            label="Share url"
+                            disabled={!_.get(script, 'public', false)}
+                            />
+                        </Form.Field>
+                    </div>
+                )}
             </Modal.Content>
         </Modal>
     )
