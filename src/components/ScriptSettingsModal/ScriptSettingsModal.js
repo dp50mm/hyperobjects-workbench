@@ -16,6 +16,8 @@ const ScriptSettingsModal = ({uiState}) => {
             >
             <Modal.Content>
                 <h1>Script settings</h1>
+                <p>Public toggle</p>
+                <p>Sharing url</p>
             </Modal.Content>
         </Modal>
     )
