@@ -14,7 +14,6 @@ let latestVersionStored = dayjs().clone().subtract(5, 'seconds')
 
 const ScriptSettingsModal = ({uiState}) => {
     const scriptsContext = useContext(ScriptContext)
-    console.log(uiState.selectedScript)
     const script = uiState.selectedScript
 
     return (

@@ -108,13 +108,6 @@ const MainMenu = ({
                         <>
                         <Menu.Menu position='left'>
                             <Menu.Item>
-                                <Button size="tiny" basic inverted
-                                    onPointerDown={() => uiState.setMainPageModal("your-scripts")}
-                                    >
-                                    Your scripts
-                                </Button>
-                            </Menu.Item>
-                            <Menu.Item>
                                 <Dropdown
                                     search
                                     searchInput={{type: 'text'}}
@@ -123,7 +116,7 @@ const MainMenu = ({
                                         uiState.setSelectedScriptId(data.value)
                                         setDefocus(true)
                                     }}
-                                    placeholder='Scripts'
+                                    placeholder='Select a script'
                                     fluid
                                     selection
                                     className='main-menu-script-select'

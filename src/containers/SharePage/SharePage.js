@@ -11,6 +11,9 @@ const SharePage = () => {
     const urlParams = new URLSearchParams(queryString)
 
     const scriptId = urlParams.get("script")
+    const mode = urlParams.get("mode")
+    
+
 
     useEffect(() => {
         if(!_.isNull(scriptId) && loadingScript === false && script === false) {
