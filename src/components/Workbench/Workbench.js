@@ -141,13 +141,14 @@ const Workbench = ({
     }, [setWindowSize])
     const resizerPadding = 5
     const menuHeight = 41
-    const frameWidth = windowSize.width - windowSize.width * colDivision
-    const codeEditorWidth =  windowSize.width * colDivision - resizerPadding
+    const _colDivision = windowSize.width < 400 ? 0 : colDivision
+    const frameWidth = windowSize.width - windowSize.width * _colDivision
+    const codeEditorWidth =  windowSize.width * _colDivision - resizerPadding
     useEffect(() => {
-      if(editor) {
-        editor.layout()
-      }
-	})
+        if(editor) {
+          editor.layout()
+        }
+    })
     model.name = name
 	return (
 		<div className="workbench" ref={workbenchRef}
