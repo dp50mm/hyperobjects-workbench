@@ -141,7 +141,7 @@ const Workbench = ({
     }, [setWindowSize])
     const resizerPadding = 5
     const menuHeight = 41
-    const _colDivision = windowSize.width < 400 ? 0 : colDivision
+    const _colDivision = windowSize.width < 450 ? 0 : colDivision
     const frameWidth = windowSize.width - windowSize.width * _colDivision
     const codeEditorWidth =  windowSize.width * _colDivision - resizerPadding
     useEffect(() => {
@@ -169,46 +169,52 @@ const Workbench = ({
 		}}
 		>
 		<div style={{display: 'flex', position: 'relative'}} >
-			<div className='resizer'
-			style={{
-				position: 'absolute',
-				top: 0,
-				left: codeEditorWidth,
-				height: windowSize.height - menuHeight,
-				width: resizerPadding,
-				background: 'black',
-				opacity: 0.5,
-				cursor: 'col-resize',
-				zIndex: 100
-			}}
-			onPointerDown={() => {
-				setResizingColumns(true)
-			}}
-			/>
-			<div style={{width: codeEditorWidth, marginRight: resizerPadding}}>
-			<MonacoEditor
-				value={code}
-				onChange={(e, newValue) => {
-				setCode(newValue)
-				setCodeUpdated(true)
-				}}
-				language="javascript"
-				options={{
-				selectOnLineNumbers: true,
-				automaticLayout: true
-				}}
-				automaticLayout={true}
-				height={windowSize.height - menuHeight}
-				theme='vs-dark'
-				editorDidMount={(_editor, monaco) => {
-				editor = monaco
-				}}
-				/>
-				<AlertMessages
-				width={codeEditorWidth}
-				messages={alertMessages}
-				/>
-			</div>
+      {windowSize.width > 450 && (
+        <React.Fragment>
+        <div className='resizer'
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: codeEditorWidth,
+            height: windowSize.height - menuHeight,
+            width: resizerPadding,
+            background: 'black',
+            opacity: 0.5,
+            cursor: 'col-resize',
+            zIndex: 100
+          }}
+          onPointerDown={() => {
+            setResizingColumns(true)
+          }}
+          />
+          <div style={{width: codeEditorWidth, marginRight: resizerPadding}}>
+            <MonacoEditor
+              value={code}
+              onChange={(e, newValue) => {
+              setCode(newValue)
+              setCodeUpdated(true)
+              }}
+              language="javascript"
+              options={{
+              selectOnLineNumbers: true,
+              automaticLayout: true
+              }}
+              automaticLayout={true}
+              height={windowSize.height - menuHeight}
+              theme='vs-dark'
+              editorDidMount={(_editor, monaco) => {
+              editor = monaco
+              }}
+              />
+              <AlertMessages
+              width={codeEditorWidth}
+              messages={alertMessages}
+              />
+          </div>
+        </React.Fragment>
+      )}
+			
+			
 			<div style={{width: frameWidth}} ref={frameContainerRef}>
 			<Frame
 				width={frameWidth}
