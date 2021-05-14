@@ -187,7 +187,7 @@ const Workbench = ({
             setResizingColumns(true)
           }}
           />
-          <div style={{width: codeEditorWidth, marginRight: resizerPadding}}>
+          <div style={{width: codeEditorWidth, marginRight: resizerPadding, zIndex: 3}}>
             <MonacoEditor
               value={code}
               onChange={(e, newValue) => {
