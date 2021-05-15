@@ -1,4 +1,4 @@
-h1, h2, h3, h4, h5, p, li, ul, strong, i, a {
+h1, h2, h3, h4, h5, p, li, ul, strong, i, a, label {
     font-family: Europa;
 }
 
@@ -13,4 +13,21 @@ h1, h2, h3, h4, h5, p, li, ul, strong, i, a {
         background-color: rgba(255,255,255,0.4) !important;
     }
     
+}
+
+.ui.label {
+    font-family: Europa;
+}
+
+.ui.input {
+    input {
+        font-family: Europa;
+    }
+    button.ui.button {
+        font-family: Europa;
+    }
+}
+
+button.ui.button {
+    font-family: Europa;
 }

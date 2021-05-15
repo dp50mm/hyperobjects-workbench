@@ -17,7 +17,8 @@ import {
     LoginForm
 } from '@dialectic-design/hyperobjects-user-context'
 import {
-    NewEntityForm
+    NewEntityForm,
+    EntitiesOverview
 } from '@dialectic-design/hyperobjects-entity-context'
 import './main-menu.scss'
 import {
@@ -33,6 +34,7 @@ const MainMenu = ({
     const scriptsContext = useContext(ScriptContext)
     const [modal, setModal] = useState(false)
     const [defocus, setDefocus] = useState(false)
+    const [showEntitiesOverview, setShowEntitiesOverview] = useState(false)
     let scriptsForMenu = []
     scriptsContext.list.forEach(script => {
         scriptsForMenu.push({
@@ -70,14 +72,18 @@ const MainMenu = ({
             <Modal
                 open={modal === 'new-script-modal'}
                 onClose={() => {
-                    console.log(scriptsContext)
+                    scriptsContext.actions.resetCreate()
                     setModal(false)
                 }}
                 closeIcon
                 size="mini"
                 >
                 <Modal.Content>
-                    <NewEntityForm context={ScriptContext} />
+                    <NewEntityForm context={ScriptContext}
+                        newlyCreatedCallback={(newScript) => {
+                            uiState.setSelectedScriptId(newScript._id)
+                        }}
+                        />
                 </Modal.Content>
             </Modal>
             <Menu inverted className='main-menu'>
@@ -142,6 +148,15 @@ const MainMenu = ({
                                 </React.Fragment>
                             )}
                             <Menu.Item>
+                                <Button
+                                    icon="list alternate outline"
+                                    size="tiny" basic inverted
+                                    onPointerDown={() => {
+                                        setShowEntitiesOverview(!showEntitiesOverview)
+                                    }}
+                                    />
+                            </Menu.Item>
+                            <Menu.Item>
                                 <Button size="tiny" basic inverted onPointerDown={() => {
                                     // actions.scriptCreateResetParameters()
                                     setModal('new-script-modal')
@@ -192,6 +207,20 @@ const MainMenu = ({
                     )}
                 </Container>
             </Menu>
+            <div className={showEntitiesOverview ? "fold-out showing" : "fold-out"}
+            style={{
+                top: showEntitiesOverview ? 41 : -515
+                }}>
+                <Container>
+                    <EntitiesOverview
+                        context={ScriptContext}
+                        onEntitySelect={(script) => {
+                            uiState.setSelectedScriptId(script._id)
+                            setShowEntitiesOverview(false)
+                        }}
+                        />
+                </Container>
+            </div>
         </React.Fragment>
     )
 }

@@ -12,7 +12,9 @@ const SharePage = () => {
 
     const scriptId = urlParams.get("script")
     const mode = urlParams.get("mode")
-    
+    // full frame mode
+
+    // no menu mode
 
 
     useEffect(() => {
