@@ -18,6 +18,8 @@ import AlertMessages from './components/AlertMessages'
 import {
   getLetWarnings 
 } from './util/codeUtils'
+import workbenchCodeWrapper from "./util/workbenchCodeWrapper"
+import modulesWrapper from "./util/modulesWrapper"
 
 setupCodeExecution()
 
@@ -29,6 +31,8 @@ let model = new Model()
 
 let editor = false
 
+let moduleEditor = false
+
 const urlParams = getParams(window.location.href)
 let dontRunCode = _.get(urlParams, 'stop-code', false) === 'y'
 
@@ -37,13 +41,16 @@ let dontRunCode = _.get(urlParams, 'stop-code', false) === 'y'
 const Workbench = ({
 	name,
 	script,
+	moduleScript,
+	modules = [],
 	onChange,
-  scriptFromProp,
-  autoRun
+	scriptFromProp,
+	autoRun
 }) => {
     const workbenchRef = useRef(null)
     const frameContainerRef = useRef(null)
     const [code, setCode] = useState(script)
+    const [moduleCode , setModuleCode] = useState(moduleScript)
     const [codeUpdated, setCodeUpdated] = useState(true)
     const [modelUpdated, setModelUpdated] = useState(false)
     const [modelIncrement, setModelIncrement] = useState(0)
@@ -54,67 +61,72 @@ const Workbench = ({
       script_error: false
     })
     const mouse = useMouse(workbenchRef, {
-      enterDelay: 100,
-      leaveDelay: 100
+		enterDelay: 100,
+		leaveDelay: 100
     })
     const [windowSize, setWindowSize] = useState({
-      width: window.innerWidth,
-      height: window.innerHeight
+		width: window.innerWidth,
+		height: window.innerHeight
     })
     
     useEffect(() => {
-      if(scriptFromProp) {
-        setCode(script)
-        setCodeUpdated(true)
-      }
-    }, [scriptFromProp, script])
+		if(scriptFromProp) {
+			setCode(script)
+			setModuleCode(moduleScript)
+			setCodeUpdated(true)
+		}
+    }, [scriptFromProp, script, moduleScript])
     
     useEffect(() => {
         if(codeUpdated) {
+			if(_.isUndefined(window.WORKBENCH_MODULES)) {
+				window.WORKBENCH_MODULES = {}
+			}
           // code has updated, run code
-          try {
-              var wrappedCode = hyperobjectsLanguageWrapper(code)
-              let letWarnings = getLetWarnings(code)
-              if(letWarnings.length > 0) {
-                let letAlertMessageText = "Warning: using let can cause crashes with double declarations. Try using var instead! check code line(s): "
-                letWarnings.forEach(declaration => {
-                  letAlertMessageText = letAlertMessageText + `${declaration.loc.start.line}, `
-                })
-                if(!alertMessages.let_warning || alertMessages.let_warning.text !== letAlertMessageText) {
-                  setAlertMessages({...alertMessages, let_warning: {text: letAlertMessageText}})
-                }
-                var codeWithLetReplaced = _.clone(code).replace(/let \b/g, 'var ')
-                wrappedCode = hyperobjectsLanguageWrapper(codeWithLetReplaced)
-              } else {
-                if(alertMessages.let_warning) {
-                  setAlertMessages({...alertMessages, let_warning: false})
-                }
-              }
-              let syntax = esprima.parseScript(wrappedCode.script, {
-                tolerant: false,
-                loc: true
-              })
+			try {
+			  
+				var wrappedCode = hyperobjectsLanguageWrapper(workbenchCodeWrapper(modulesWrapper(code, modules)))
+				let letWarnings = getLetWarnings(code)
+				if(letWarnings.length > 0) {
+					let letAlertMessageText = "Warning: using let can cause crashes with double declarations. Try using var instead! check code line(s): "
+					letWarnings.forEach(declaration => {
+						letAlertMessageText = letAlertMessageText + `${declaration.loc.start.line}, `
+					})
+					if(!alertMessages.let_warning || alertMessages.let_warning.text !== letAlertMessageText) {
+						setAlertMessages({...alertMessages, let_warning: {text: letAlertMessageText}})
+					}
+					var codeWithLetReplaced = _.clone(code).replace(/let \b/g, 'var ')
+					wrappedCode = hyperobjectsLanguageWrapper(workbenchCodeWrapper(modulesWrapper(codeWithLetReplaced, modules)))
+				} else {
+					if(alertMessages.let_warning) {
+						setAlertMessages({...alertMessages, let_warning: false})
+					}
+				}
+				let syntax = esprima.parseScript(wrappedCode.script, {
+					tolerant: false,
+					loc: true
+				})
 
-              if(syntax.hasOwnProperty('errors')) {
-                console.log('syntax errors')
-                console.log(syntax.errors)
-                
-              } else {
-                let id = false
-                if(!dontRunCode && autoRun) {
-                  id = executeCode(wrappedCode)
-                }
-                setTimeout(() => {
-                    if(!dontRunCode && autoRun) {
-                      model = window[`OUTPUTMODEL${id}`]
-                    }
-                    if(alertMessages.script_error !== false) {
-                      setAlertMessages({...alertMessages, script_error: false})
-                    }
-                    onChange(code)
-                    setModelUpdated(true)
-                }, 10)
-              }
+				if(syntax.hasOwnProperty('errors')) {
+					console.log('syntax errors')
+					console.log(syntax.errors)
+				
+				} else {
+					let id = false
+					if(!dontRunCode && autoRun) {
+						id = executeCode(wrappedCode)
+					}
+					setTimeout(() => {
+						if(!dontRunCode && autoRun) {
+							model = window[`OUTPUTMODEL${id}`]
+						}
+						if(alertMessages.script_error !== false) {
+							setAlertMessages({...alertMessages, script_error: false})
+						}
+						onChange(code, moduleCode)
+						setModelUpdated(true)
+					}, 10)
+				}
           } catch(error) {
               console.log(error)
               setAlertMessages({...alertMessages, script_error: { text: `Line: ${error.lineNumber} - ${error.description}`}})
@@ -127,7 +139,7 @@ const Workbench = ({
         setModelIncrement(modelIncrement + 1)
         setModelUpdated(false)
         }
-    }, [codeUpdated, modelUpdated, code, alertMessages, onChange, modelIncrement])
+    }, [codeUpdated, modelUpdated, code, moduleCode, alertMessages, onChange, modelIncrement])
 
     useEffect(() => {
         function handleResize() {
@@ -188,28 +200,78 @@ const Workbench = ({
           }}
           />
           <div style={{width: codeEditorWidth, marginRight: resizerPadding, zIndex: 3}}>
-            <MonacoEditor
-              value={code}
-              onChange={(e, newValue) => {
-              setCode(newValue)
-              setCodeUpdated(true)
-              }}
-              language="javascript"
-              options={{
-              selectOnLineNumbers: true,
-              automaticLayout: true
-              }}
-              automaticLayout={true}
-              height={windowSize.height - menuHeight}
-              theme='vs-dark'
-              editorDidMount={(_editor, monaco) => {
-              editor = monaco
-              }}
-              />
-              <AlertMessages
-              width={codeEditorWidth}
-              messages={alertMessages}
-              />
+            {moduleCode ? (
+				<React.Fragment>
+					<label>Module</label>
+					<MonacoEditor
+						value={moduleCode}
+						onChange={(e, newValue) => {
+							setModuleCode(newValue)
+							setCodeUpdated(true)
+						}}
+						language="javascript"
+						options={{
+							selectOnLineNumbers: true,
+							automaticLayout: true
+						}}
+						automaticLayout={true}
+						height={(windowSize.height - menuHeight) * 0.5 - 10}
+						theme='vs-dark'
+						editorDidMount={(_editor, monaco) => {
+							moduleEditor = monaco
+						}}
+						/>
+					<label>Test</label>
+					<MonacoEditor
+						value={code}
+						onChange={(e, newValue) => {
+							setCode(newValue)
+							setCodeUpdated(true)
+						}}
+						language="javascript"
+						options={{
+							selectOnLineNumbers: true,
+							automaticLayout: true
+						}}
+						automaticLayout={true}
+						height={(windowSize.height - menuHeight) * 0.5 - 4}
+						theme='vs-dark'
+						editorDidMount={(_editor, monaco) => {
+							editor = monaco
+						}}
+						/>
+					<AlertMessages
+						width={codeEditorWidth}
+						messages={alertMessages}
+						/>
+				</React.Fragment>
+            ) : (
+				<React.Fragment>
+					<MonacoEditor
+						value={code}
+						onChange={(e, newValue) => {
+							setCode(newValue)
+							setCodeUpdated(true)
+						}}
+						language="javascript"
+						options={{
+							selectOnLineNumbers: true,
+							automaticLayout: true
+						}}
+						automaticLayout={true}
+						height={windowSize.height - menuHeight}
+						theme='vs-dark'
+						editorDidMount={(_editor, monaco) => {
+							editor = monaco
+						}}
+						/>
+					<AlertMessages
+						width={codeEditorWidth}
+						messages={alertMessages}
+						/>
+				</React.Fragment>
+            )}
+            
           </div>
         </React.Fragment>
       )}
@@ -236,9 +298,10 @@ const Workbench = ({
 }
 
 Workbench.defaultProps = {
-  script: demoScript,
-  scriptFromProp: false,
-  onChange: () => {}
+	script: demoScript,
+	scriptFromProp: false,
+	moduleScript: false,
+	onChange: () => {}
 }
 
 export default Workbench

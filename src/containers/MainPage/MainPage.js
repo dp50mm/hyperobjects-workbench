@@ -17,8 +17,11 @@ const MainPage = ({
     const [currentScriptId, setCurrentScriptId] = useState(false)
     const selectedScript = _.get(uiState, 'selectedScript', false)
     let script = _.get(selectedScript, 'script', '// select a script')
-    
-    
+    let moduleScript = _.get(selectedScript, "moduleScript", false)
+    if(!_.get(selectedScript, "isModule", false)) {
+        moduleScript = false
+    }
+    var modules = scriptsContext.list.filter(p => _.get(p, "isModule", false))
     var scriptFromProp = currentScriptId !== _.get(selectedScript, '_id', false)
     useEffect(() => {
         if(currentScriptId !== _.get(selectedScript, '_id', false)) {
@@ -39,10 +42,12 @@ const MainPage = ({
             <Workbench
                 name={_.get(selectedScript, 'name', 'no script name')}
                 script={script}
+                moduleScript={moduleScript}
                 scriptFromProp={scriptFromProp}
                 autoRun={uiState.autoRun}
-                onChange={(newScript) => {
-                    if(selectedScript && newScript !== script) {
+                modules={modules}
+                onChange={(newScript, newModuleScript) => {
+                    if(selectedScript && (newScript !== script || newModuleScript !== moduleScript)) {
                         var storeVersion = false
                         if (dayjs().diff(latestVersionStored, 'second') > 30) {
                             storeVersion = true
@@ -51,6 +56,7 @@ const MainPage = ({
                         scriptsContext.actions.updateScript({
                             ...selectedScript,
                             script: newScript,
+                            moduleScript: newModuleScript,
                             storeVersion: storeVersion
                         })
                     }

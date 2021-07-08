@@ -30,6 +30,34 @@ const ScriptSettingsModal = ({uiState}) => {
                 <p>Updated at: {script.updatedAt}</p>
                 <div className='ui form'>
                     <Form.Field>
+                        <Checkbox
+                            label="Module script"
+                            checked={_.get(script, "isModule", false)}
+                            onChange={() => {
+                                var storeVersion = false
+                                if (dayjs().diff(latestVersionStored, 'second') > 30) {
+                                    storeVersion = true
+                                    latestVersionStored = dayjs()
+                                }
+                                if(_.get(script, "isModule", false)) {
+                                    scriptsContext.actions.updateScript({
+                                        ...script,
+                                        isModule: false,
+                                        storeVersion: storeVersion
+                                    })
+                                } else {
+                                    var moduleScript = _.get(script, "moduleScript", "// module script")
+                                    scriptsContext.actions.updateScript({
+                                        ...script,
+                                        isModule: true,
+                                        moduleScript: moduleScript,
+                                        storeVersion: storeVersion
+                                    })
+                                }
+                            }}
+                            />
+                    </Form.Field>
+                    <Form.Field>
                     <Input
                         style={{width: "90%", marginBottom: 10}}
                         value={`https://workbench.hyperobjects.design/share/?script=${script._id}`}
@@ -49,7 +77,7 @@ const ScriptSettingsModal = ({uiState}) => {
                             scriptsContext.actions.updateScript({
                                 ...script,
                                 public: !_.get(script, "public", false),
-                                storeVersion: latestVersionStored
+                                storeVersion: true
                             })
                         }}
                         />
