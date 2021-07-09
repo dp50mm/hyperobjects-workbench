@@ -106,7 +106,6 @@ const Workbench = ({
 					tolerant: false,
 					loc: true
 				})
-
 				if(syntax.hasOwnProperty('errors')) {
 					console.log('syntax errors')
 					console.log(syntax.errors)
@@ -206,6 +205,7 @@ const Workbench = ({
 					<MonacoEditor
 						value={moduleCode}
 						onChange={(e, newValue) => {
+							console.log(newValue)
 							setModuleCode(newValue)
 							setCodeUpdated(true)
 						}}
