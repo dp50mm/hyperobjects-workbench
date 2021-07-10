@@ -205,7 +205,6 @@ const Workbench = ({
 					<MonacoEditor
 						value={moduleCode}
 						onChange={(e, newValue) => {
-							console.log(newValue)
 							setModuleCode(newValue)
 							setCodeUpdated(true)
 						}}
