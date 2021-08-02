@@ -199,7 +199,7 @@ const Workbench = ({
           }}
           />
           <div style={{width: codeEditorWidth, marginRight: resizerPadding, zIndex: 3}}>
-            {moduleCode ? (
+            {_.isString(moduleCode) ? (
 				<React.Fragment>
 					<label>Module</label>
 					<MonacoEditor
