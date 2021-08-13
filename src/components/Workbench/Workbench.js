@@ -20,6 +20,9 @@ import {
 } from './util/codeUtils'
 import workbenchCodeWrapper from "./util/workbenchCodeWrapper"
 import modulesWrapper from "./util/modulesWrapper"
+import {
+	Tab
+} from "semantic-ui-react"
 
 setupCodeExecution()
 
@@ -159,8 +162,75 @@ const Workbench = ({
         if(editor) {
           editor.layout()
         }
+		if(moduleEditor) {
+			moduleEditor.layout()
+		}
     })
     model.name = name
+
+	var moduleTabs = false
+	const tabsHeight = 30
+	if(_.isString(moduleCode)) {
+		moduleTabs = [
+			{
+				menuItem: "Module",
+				render: () => {
+					return (
+						<MonacoEditor
+							value={moduleCode}
+							onChange={(e, newValue) => {
+								setModuleCode(newValue)
+								setCodeUpdated(true)
+							}}
+							language="javascript"
+							options={{
+								selectOnLineNumbers: true,
+								automaticLayout: true
+							}}
+							automaticLayout={true}
+							height={(windowSize.height - menuHeight) - tabsHeight}
+							theme='vs-dark'
+							editorDidMount={(_editor, monaco) => {
+								moduleEditor = monaco
+							}}
+							/>
+					)
+				}
+			},
+			{
+				menuItem: "Script",
+				render: () => {
+					return (
+						<React.Fragment>
+							<MonacoEditor
+								value={code}
+								onChange={(e, newValue) => {
+									setCode(newValue)
+									setCodeUpdated(true)
+								}}
+								language="javascript"
+								options={{
+									selectOnLineNumbers: true,
+									automaticLayout: true
+								}}
+								automaticLayout={true}
+								height={(windowSize.height - menuHeight) - tabsHeight}
+								theme='vs-dark'
+								editorDidMount={(_editor, monaco) => {
+									editor = monaco
+								}}
+								/>
+							<AlertMessages
+								width={codeEditorWidth}
+								messages={alertMessages}
+								/>
+						</React.Fragment>
+					)
+				}
+			}
+		]
+	}
+
 	return (
 		<div className="workbench" ref={workbenchRef}
 		style={{
@@ -199,51 +269,12 @@ const Workbench = ({
           }}
           />
           <div style={{width: codeEditorWidth, marginRight: resizerPadding, zIndex: 3}}>
-            {_.isString(moduleCode) ? (
-				<React.Fragment>
-					<label>Module</label>
-					<MonacoEditor
-						value={moduleCode}
-						onChange={(e, newValue) => {
-							setModuleCode(newValue)
-							setCodeUpdated(true)
-						}}
-						language="javascript"
-						options={{
-							selectOnLineNumbers: true,
-							automaticLayout: true
-						}}
-						automaticLayout={true}
-						height={(windowSize.height - menuHeight) * 0.5 - 10}
-						theme='vs-dark'
-						editorDidMount={(_editor, monaco) => {
-							moduleEditor = monaco
-						}}
-						/>
-					<label>Test</label>
-					<MonacoEditor
-						value={code}
-						onChange={(e, newValue) => {
-							setCode(newValue)
-							setCodeUpdated(true)
-						}}
-						language="javascript"
-						options={{
-							selectOnLineNumbers: true,
-							automaticLayout: true
-						}}
-						automaticLayout={true}
-						height={(windowSize.height - menuHeight) * 0.5 - 4}
-						theme='vs-dark'
-						editorDidMount={(_editor, monaco) => {
-							editor = monaco
-						}}
-						/>
-					<AlertMessages
-						width={codeEditorWidth}
-						messages={alertMessages}
-						/>
-				</React.Fragment>
+            {moduleTabs ? (
+				<Tab
+					menu={{ inverted: true, tabular: false, className: "module-tabs" }}
+					width={codeEditorWidth}
+					panes={moduleTabs}
+					/>
             ) : (
 				<React.Fragment>
 					<MonacoEditor

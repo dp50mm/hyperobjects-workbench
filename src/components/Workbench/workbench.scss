@@ -1,6 +1,16 @@
 .workbench {
     overflow: hidden;
-    
+    .module-tabs {
+        margin-bottom: 0px;
+        border-radius: 0px;
+        border-bottom: 1px solid grey !important;
+        min-height: initial !important;
+        .item {
+            border-radius: 0px !important;
+            padding-top:    7px;
+            padding-bottom: 7px;
+        }
+    }
     .columnResizer {
         width: 5px;
         background: blue;
