@@ -143,6 +143,13 @@ const Workbench = ({
         }
     }, [codeUpdated, modelUpdated, code, moduleCode, alertMessages, onChange, modelIncrement])
 
+	useEffect(() => {
+		if(_.get(window, "REFRESH_SCRIPT", false)) {
+			window.REFRESH_SCRIPT = false
+			setCodeUpdated(true)
+		}
+	})
+
     useEffect(() => {
         function handleResize() {
             setWindowSize({

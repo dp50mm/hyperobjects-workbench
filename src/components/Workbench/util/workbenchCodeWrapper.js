@@ -17,6 +17,12 @@ function loadModule(moduleName) {
     }
     return moduleToLoad
 }
+
+function refreshScript() {
+    window.REFRESH_SCRIPT = true
+}
+
+
 ${code}
 `
 }
